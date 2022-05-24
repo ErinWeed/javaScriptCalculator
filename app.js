@@ -13,7 +13,8 @@ let divide = (a,b) => {
     } else { 
         return a / b
     }    
-};
+}
+
 let operate = (a,b, operationStr) => {
     let answer;
     switch(operationStr) {
@@ -30,16 +31,19 @@ let operate = (a,b, operationStr) => {
             answer = divide(a,b);
             break;
     }
-    console.log(`${a} ${operationStr} ${b} = ${answer}`)
     return answer
 }
+
 let addToDisplay = (toAdd)=> {
-    let display = document.querySelector('#answer');
-    if (display.textContent.length < 14) display.append(toAdd.id);
+    let display = document.querySelector('#answer').textContent;
+    let num = display + toAdd;
+    if (num.length > 13) {
+        num = parseFloat(num).toPrecision(13)
+    }
+    document.querySelector('#answer').textContent = num;
 }
 
 let clearDisplay = () => {
-    console.log("clearing")
     document.querySelector('#answer').textContent = ""
     clearOnNextInput= false;
     acceptingInput = true;
@@ -51,11 +55,11 @@ let equals = (current) =>{
     let previous = sequence.shift()
     let operator = sequence.shift()
     let answer = operate(previous, current, operator)
-    console.log(answer)
-    document.querySelector('#answer').textContent = answer
-    acceptingInput = false
+    clearDisplay()
+    addToDisplay(answer)
+    acceptingInput = false;
     clearOnNextInput = true;
-    lastAnswer = answer
+    lastAnswer = answer;
     return answer
 }
 
@@ -71,7 +75,6 @@ let setUpOperation = (operation) => {
     sequence.push(operation)
     clearOnNextInput = true;
     } else if (sequence.length === 2) {
-        console.log('equals anyway')
         let answer = equals(current);
         sequence.push(answer)
         sequence.push(operation)
@@ -79,22 +82,20 @@ let setUpOperation = (operation) => {
 }
 
 let directInput = (pressed)=> {
-    console.log(`start: ${sequence}`)
     let classes = [...pressed.classList]
     if (clearOnNextInput) {
         clearDisplay()
     };
     if (classes.includes('digit') && acceptingInput) {
-        addToDisplay(pressed)
+        addToDisplay(pressed.id)
     } else if (classes.includes('operators')) {
         setUpOperation(pressed.id)
         acceptingInput = true;
         acceptingDecimal = true;
     } else if (classes.includes('decimal') && acceptingDecimal) {
-        addToDisplay(pressed)
+        addToDisplay(pressed.id)
         acceptingDecimal = false
     }
-    console.log(`end: ${sequence}`)
     };
 
 const allButtons = document.querySelectorAll('.numbers')

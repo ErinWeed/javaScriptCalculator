@@ -2,13 +2,13 @@ const sequence = [];
 acceptingDecimal = true;
 clearOnNextInput = false;
 acceptingInput = true;
+let lastAnswer = 0;
 let add = (a,b) => a + b;
 let subtract = (a,b) => a - b;
 let multiply = (a,b) => a * b;
 let divide = (a,b) => {
     if (b == 0) {
-        document.querySelector('#answer').textContent = "You can't do that";
-        setTimeout(clearDisplay, 1000)
+        alert("You can't do that!")
         return 0
     } else { 
         return a / b
@@ -55,6 +55,7 @@ let equals = (current) =>{
     document.querySelector('#answer').textContent = answer
     acceptingInput = false
     clearOnNextInput = true;
+    lastAnswer = answer
     return answer
 }
 
@@ -66,7 +67,7 @@ let setUpOperation = (operation) => {
     } else if (operation === "equals" && sequence.length === 2){
         equals(current)
     } else if (sequence.length === 0 && operation !== "equals") {
-    sequence.push(current)
+        current? sequence.push(current): sequence.push(lastAnswer)
     sequence.push(operation)
     clearOnNextInput = true;
     } else if (sequence.length === 2) {
@@ -80,8 +81,9 @@ let setUpOperation = (operation) => {
 let directInput = (pressed)=> {
     console.log(`start: ${sequence}`)
     let classes = [...pressed.classList]
-    console.log(`id: ${pressed.id} classes: ${classes}`)
-    if (clearOnNextInput) clearDisplay();
+    if (clearOnNextInput) {
+        clearDisplay()
+    };
     if (classes.includes('digit') && acceptingInput) {
         addToDisplay(pressed)
     } else if (classes.includes('operators')) {

@@ -51,6 +51,7 @@ let clearDisplay = () => {
 }
 
 let equals = (current) =>{
+    document.activeElement.blur();
     clearDisplay()
     let previous = sequence.shift()
     let operator = sequence.shift()
@@ -86,9 +87,10 @@ let setUpOperation = (operation) => {
 const determineKeyPressed = (e)=> {
     console.log(e)
     let pressed;
-    let options = {1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,'.':'decimal', '+':'add', '-':'subtract', '*':'multiply','/':'divide'}
+    let digits = {1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,'.':'decimal', '+':'add', '-':'subtract', '*':'multiply','/':'divide'}
     
     if (e.key == 0) {
+        console.log('yes')
         pressed = 0
     } else if (e.code == "NumpadEnter") {
         pressed = "enter"
@@ -96,18 +98,19 @@ const determineKeyPressed = (e)=> {
         pressed = options[e.key]
     } else {
         console.log(`key: ${e.key} not found`)
+        return null
     }
     console.log(`key: ${pressed}`)
-    pressed? directInput(pressed): null;
+    directInput(pressed);
 }
 
 const directInput = (key)=> {
     console.log(`key: ${key}`)
     if (clearOnNextInput) {
-        console.log('clearing')
         clearDisplay()
     };
     if (key >= 0 && key <= 9 && acceptingInput) {
+        console.log('still yes')
         addToDisplay(key)
     } else if (key == "decimal" && acceptingDecimal){
         addToDisplay(".")
@@ -120,7 +123,6 @@ const directInput = (key)=> {
     }
 }
 const allButtons = document.querySelectorAll('.numbers')
-
 
 let printId = (thing)=>
     addToDisplay(thing.id)

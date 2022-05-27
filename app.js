@@ -64,7 +64,9 @@ let equals = (current) =>{
 }
 
 let setUpOperation = (operation) => {
-    let current = parseInt(document.querySelector('#answer').textContent);
+    console.log(operation)
+    let current = parseFloat(document.querySelector('#answer').textContent);
+    console.log(current)
     if (operation === "clear") {
         sequence.length = 0
         clearDisplay()
@@ -81,29 +83,50 @@ let setUpOperation = (operation) => {
     }
 }
 
-let directInput = (pressed)=> {
-    let classes = [...pressed.classList]
+const determineKeyPressed = (e)=> {
+    console.log(e)
+    let pressed;
+    let options = {1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,'.':'decimal', '+':'add', '-':'subtract', '*':'multiply','/':'divide'}
+    
+    if (e.key == 0) {
+        pressed = 0
+    } else if (e.code == "NumpadEnter") {
+        pressed = "enter"
+    } else if (options[e.key]) {
+        pressed = options[e.key]
+    } else {
+        console.log(`key: ${e.key} not found`)
+    }
+    console.log(`key: ${pressed}`)
+    pressed? directInput(pressed): null;
+}
+
+const directInput = (key)=> {
+    console.log(`key: ${key}`)
     if (clearOnNextInput) {
+        console.log('clearing')
         clearDisplay()
     };
-    if (classes.includes('digit') && acceptingInput) {
-        addToDisplay(pressed.id)
-    } else if (classes.includes('operators')) {
-        setUpOperation(pressed.id)
+    if (key >= 0 && key <= 9 && acceptingInput) {
+        addToDisplay(key)
+    } else if (key == "decimal" && acceptingDecimal){
+        addToDisplay(".")
+        acceptingDecimal = false
+    } else {
+        console.log(`operation: ${key}`)
+        setUpOperation(key)
         acceptingInput = true;
         acceptingDecimal = true;
-    } else if (classes.includes('decimal') && acceptingDecimal) {
-        addToDisplay(pressed.id)
-        acceptingDecimal = false
     }
-    };
-
+}
 const allButtons = document.querySelectorAll('.numbers')
+
 
 let printId = (thing)=>
     addToDisplay(thing.id)
 
 for (let button of allButtons) {
-    button.addEventListener('click', ()=>directInput(button))
+    button.addEventListener('click', ()=>directInput(button.id))
 }
 
+window.addEventListener('keydown', determineKeyPressed)
